@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
     <head>
-        <title>ZolonGames Chat</title>
+        <title>ZolonGames Die-Roller</title>
         <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css" />
     </head>
     <body>
@@ -17,7 +17,7 @@
                 <label for='color'>Color:</label>
                 <input name='color' id='color' type="color" />
                 <label for='bonus'>Bonus:</label>
-                <input name='bonus' id='bonus' type="number" />
+                <input name='bonus' id='bonus' type="number" value="0" />
             </div>
             <button onclick="rolldie(2);">D2</button>
             <button onclick="rolldie(4);">D4</button>
@@ -46,12 +46,17 @@
             });
 
             function rolldie(dieSize) {
-                socket.emit('new roll',     {die    : dieSize,
-                                            bonus   : $('#bonus').val(),
-                                            name    : $('#name').val(),
-                                            color   : $('#color').val()});
+                let bonus = $('#bonus').val();
+                let name = $('#name').val();
+                let color = $('#color').val();
+                let rolldata = {die    : dieSize,
+                                            bonus   : bonus == '' ? 0 : parseInt(bonus),
+                                            name    : name == '' ? 'Nameless' : name,
+                                            color   : color == null ? '#000000' : color};
+                console.log(rolldata);
+                socket.emit('new roll', rolldata);
 
-            }
+            };
         </script>
     </body>
 </html>

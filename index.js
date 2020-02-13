@@ -22,7 +22,7 @@ io.on('connection', function(socket){
             die     : rolldata.die,
             roll    : roll,
             bonus   : rolldata.bonus,
-            result  : roll + parseInt(rolldata.bonus),
+            result  : roll + rolldata.bonus,
             name    : rolldata.name,
             color   : rolldata.color
         }
