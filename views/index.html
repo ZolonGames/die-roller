@@ -1,0 +1,57 @@
+<!doctype html>
+<html>
+    <head>
+        <title>ZolonGames Chat</title>
+        <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css" />
+    </head>
+    <body>
+        <div>
+            <div>
+                <div id="messages"></div>
+            </div>
+        </div>
+        <div id="dice">
+            <div id="Details">
+                <label for='name'>Name:</label>
+                <input name='name' id='name' type="text" />
+                <label for='color'>Color:</label>
+                <input name='color' id='color' type="color" />
+                <label for='bonus'>Bonus:</label>
+                <input name='bonus' id='bonus' type="number" />
+            </div>
+            <button onclick="rolldie(2);">D2</button>
+            <button onclick="rolldie(4);">D4</button>
+            <button onclick="rolldie(6);">D6</button>
+            <button onclick="rolldie(8);">D8</button>
+            <button onclick="rolldie(10);">D10</button>
+            <button onclick="rolldie(12);">D12</button>
+            <button onclick="rolldie(20);">D20</button>
+            <button onclick="rolldie(100);">D100</button>
+        </div>
+        <script src="/socket.io/socket.io.js"></script>
+        <script
+            src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+            integrity="sha256-pasqAKBDmFT4eHoN2ndd6lN370kFiGUFyTiUHWhU7k8="
+            crossorigin="anonymous">
+        </script>
+        <script>
+            var socket;
+            $(function () {
+                socket = io();
+                socket.on('post rolls', function(rolls){
+                    $('#messages').html('');
+                    rolls.map(roll => $('#messages').append($('<div>').html("<span style='color: " + roll.color + "'><strong>" + roll.name + "</strong> rolled a <strong>D" + 
+                        roll.die + "</strong>, with a result of <strong>" + roll.result + "</strong> (Roll of " + roll.roll + " + " + roll.bonus + ")</span>")));
+                });
+            });
+
+            function rolldie(dieSize) {
+                socket.emit('new roll',     {die    : dieSize,
+                                            bonus   : $('#bonus').val(),
+                                            name    : $('#name').val(),
+                                            color   : $('#color').val()});
+
+            }
+        </script>
+    </body>
+</html>
