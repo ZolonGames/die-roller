@@ -12,7 +12,7 @@ app.get('/', function(req, res){
 
 io.on('connection', function(socket){
     console.log('New Connection Detected');
-    io.emit('post rolls', recentMessages);
+    socket.emit('post rolls', recentMessages);
     socket.on('disconnect', function(){
         console.log('User Disconnected');
     });
