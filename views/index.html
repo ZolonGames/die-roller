@@ -18,6 +18,8 @@
                 <input name='color' id='color' type="color" />
                 <label for='bonus'>Bonus:</label>
                 <input name='bonus' id='bonus' type="number" value="0" />
+                <label for='numDice'>Number of Dice:</label>
+                <input name='numDice' id='numDice' type="number" value="1" />
             </div>
             <button onclick="rolldie(2);">D2</button>
             <button onclick="rolldie(4);">D4</button>
@@ -40,22 +42,30 @@
                 socket = io();
                 socket.on('post rolls', function(rolls){
                     $('#messages').html('');
-                    rolls.map(roll => $('#messages').append($('<div>').html("<span style='color: " + roll.color + "'><strong>" + roll.name + "</strong> rolled a <strong>D" + 
-                        roll.die + "</strong>, with a result of <strong>" + roll.result + "</strong> (Roll of " + roll.roll + " + " + roll.bonus + ")</span>")));
+                    rolls.map(roll => $('#messages').append($('<div>').html("<span style='color: " + roll.color + "'><strong>" + roll.name + "</strong> rolled <strong>" + roll.numDice + "D" + 
+                        roll.die + "</strong>, with a result of <strong>" + roll.result + "</strong> (Total roll of " + roll.total + " + bonus of " + roll.bonus + ")</span>")));
                 });
             });
 
-            function rolldie(dieSize) {
+            rolldie = (dieSize) => {
                 let bonus = $('#bonus').val();
                 let name = $('#name').val();
                 let color = $('#color').val();
+                let numDice = $('#numDice').val();               
+                numDice = validateNumberOfDice(numDice);
+                console.log(numDice + " after cleaning");
                 let rolldata = {die    : dieSize,
                                             bonus   : bonus == '' ? 0 : parseInt(bonus),
                                             name    : name == '' ? 'Nameless' : name,
-                                            color   : color == null ? '#000000' : color};
+                                            color   : color == null ? '#000000' : color,
+                                            numDice : numDice};
                 console.log(rolldata);
                 socket.emit('new roll', rolldata);
+            };
 
+            validateNumberOfDice = (numDice) => {
+                cleanedDice = numDice == '' ? 1 : parseInt(numDice);
+                return cleanedDice < 1 ? 1 : cleanedDice;
             };
         </script>
     </body>

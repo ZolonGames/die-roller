@@ -17,12 +17,13 @@ io.on('connection', function(socket){
         console.log('User Disconnected');
     });
     socket.on('new roll', function(rolldata){
-        roll = dieroll(rolldata.die);
+        total = dieroll(rolldata.die, rolldata.numDice);
         message = {
             die     : rolldata.die,
-            roll    : roll,
+            numDice : rolldata.numDice,
+            total   : total,
             bonus   : rolldata.bonus,
-            result  : roll + rolldata.bonus,
+            result  : total + rolldata.bonus,
             name    : rolldata.name,
             color   : rolldata.color
         }
@@ -35,9 +36,14 @@ io.on('connection', function(socket){
     });
 });
 
-function dieroll(die)
+dieroll = (die, numDice) =>
 {
-    return Math.floor((Math.random() * die) + 1);
+    let total = 0;
+    for (let i = 0; i < numDice; i++)
+    {
+        total += Math.floor((Math.random() * die) + 1);
+    }
+    return total;
 }
 
 http.listen(PORT, function(){
